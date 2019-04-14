@@ -6,3 +6,6 @@ run:		main.out
 
 clean:		main.out
 	rm main.out
+
+auto:
+	make compile run clean
