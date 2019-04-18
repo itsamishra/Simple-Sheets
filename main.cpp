@@ -3,11 +3,9 @@
 #include <string>
 #include <vector>
 
-#define CSV_FILE_NAME "MOCK_DATA.csv"
-
-class CsvData {
-	std::vector<std::string> headers;
-};
+#define CSV_FILE_NAME	"MOCK_DATA.csv"
+#define NUM_COLUMNS	5
+#define NUM_DATA_ROWS	100
 
 int main(int argc, char *argv[]){
 	// STEP 1: Load csv data from disk to memory
@@ -27,15 +25,11 @@ int main(int argc, char *argv[]){
 
 	// Reads csv file, line by line
 	std::string line;
-	std::vector<std::string> csvLines;
+	std::string allCsvData = "";
 	while(getline(csv_file, line)){
-		csvLines.push_back(line);
+		allCsvData += line + ",";
 	}
-
-	// Prints out contents of file
-	for (uint i=0; i<csvLines.size(); i++){
-		std::cout << csvLines[i] << "\n";
-	}
+	std::cout << allCsvData << "\n";
 
 	// Closes file
 	csv_file.close();
