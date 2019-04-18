@@ -61,9 +61,13 @@ int main(int argc, char *argv[]){
 			
 			// If header hasn't yet been parsed, parses header
 			if (headerParsed == false){
-				int arrayIndex = (cellCount%5)-1;
+				int arrayIndex = (cellCount % NUM_COLUMNS)-1;	// Subtracts 1 because arrays are zero-indexed
+				//std::cout << "\narrayIndex: " << arrayIndex << "\n";
 				spreadsheet.headerArray[arrayIndex] = currentCell;
-				headerParsed = true;
+				
+				if (cellCount % NUM_COLUMNS == 0){
+					headerParsed = true;
+				}
 			}
 
 
@@ -75,6 +79,10 @@ int main(int argc, char *argv[]){
 		}
 	}
 	std::cout << cellCount << "\n";
+
+	for (int i=0; i<NUM_COLUMNS; i++){
+		std::cout << spreadsheet.headerArray[i] << "\n";
+	}
 
 	// STEP 2: Save csv data from memory to disk
 	// - figure out how to write to file
