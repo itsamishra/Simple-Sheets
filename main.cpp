@@ -15,11 +15,6 @@ class Spreadsheet {
 
 
 int main(int argc, char *argv[]){
-	// STEP 1: Load csv data from disk to memory
-	// - figure out how to read from file
-	// - figure out which data structure I want to use to store the data
-	// - load file line-by-line (first line is headers) and pass it into data structure
-
 	// Opens file in read mode
 	std::ifstream csv_file;
 	csv_file.open(CSV_FILE_NAME, std::ios::in);
@@ -41,47 +36,49 @@ int main(int argc, char *argv[]){
 	// Closes file
 	csv_file.close();
 
-	
-	// Extracts header and data from string	and loads it into Spreadsheet object
-	Spreadsheet spreadsheet;
-	int cellCount = 0;		// Keeps track of # of spreadsheet cells which have been parsed
-	int cellSize = 0;		// Keep track of string in cell's size in for loop below
-	bool headerParsed = false;	// Keeps track of whether the header has been parsed yet
-	for (int i=0; i<csvString.length(); i++){
-		// If comma is encountered, then current cell must have ended
+	// Reads header into Spreadsheet object
+	Spreadsheet sheet;		// Contains all spreadsheet data
+	int headerEndIndex = 0;		// Keeps track of string index at which the header ends and the data starts
+	int headerLength = 0;		// Keeps track of header length
+	int numHeadersFound = 0;	// Keeps track of # of headers found
+	int numHeaders = NUM_COLUMNS;	// Keeps track of # of headers that exist
+	for (uint i=0; i<csvString.length(); i++){
+		// If the next character is a comma, then we must be at the end of a header
 		if (csvString[i]==','){
-			// Extracts current cell
-			std::string currentCell = csvString.substr(i-cellSize, cellSize);
-			std::cout << currentCell << ",";
-
-			cellCount += 1;
-			if (cellCount % 5 == 0){
-				std::cout << "\n";
-			}
+			// Extracts header from string
+			std::string header = csvString.substr(i-headerLength, headerLength);
+			//std::cout << header << "\n";
 			
-			// If header hasn't yet been parsed, parses header
-			if (headerParsed == false){
-				int arrayIndex = (cellCount % NUM_COLUMNS)-1;	// Subtracts 1 because arrays are zero-indexed
-				//std::cout << "\narrayIndex: " << arrayIndex << "\n";
-				spreadsheet.headerArray[arrayIndex] = currentCell;
-				
-				if (cellCount % NUM_COLUMNS == 0){
-					headerParsed = true;
-				}
+			// Resets header length
+			headerLength = 0;
+		
+			// Adds new header to Spreadsheet object and checks to see if there are any more headers to find
+			numHeadersFound ++;
+			int headerIndex = numHeadersFound - 1;
+			sheet.headerArray[headerIndex] = header;
+			// If all headers have been found, records index at which headers end and exits loop
+			if (numHeadersFound == numHeaders){
+				headerEndIndex = i + 1; // Adds 1 so that index points to first character of data
+				break;
 			}
-
-
-			// Resets cell size
-			cellSize = 0;
 		}
 		else {
-			cellSize += 1;
+			headerLength += 1;
 		}
 	}
-	std::cout << cellCount << "\n";
 
-	for (int i=0; i<NUM_COLUMNS; i++){
-		std::cout << spreadsheet.headerArray[i] << "\n";
+	// Loads data into Spreadsheet object
+	int dataLength = 0;	// Keeps track of the size of the data string
+	for (uint i=headerEndIndex; i<csvString.length(); i++){
+		std::cout << csvString[i];
+
+		if (csvString[i]==','){
+
+			dataLength = 0;
+		}
+		else {
+			dataLength += 1;
+		}
 	}
 
 	// STEP 2: Save csv data from memory to disk
