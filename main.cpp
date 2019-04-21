@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
 
 	// Reads header into Spreadsheet object
 	Spreadsheet sheet;		// Contains all spreadsheet data
-	int headerEndIndex = 0;		// Keeps track of string index at which the header ends and the data starts
+	int dataStartIndex = 0;		// Keeps track of string index at which the header ends and the data starts
 	int headerLength = 0;		// Keeps track of header length
 	int numHeadersFound = 0;	// Keeps track of # of headers found
 	int numHeaders = NUM_COLUMNS;	// Keeps track of # of headers that exist
@@ -47,7 +47,6 @@ int main(int argc, char *argv[]){
 		if (csvString[i]==','){
 			// Extracts header from string
 			std::string header = csvString.substr(i-headerLength, headerLength);
-			//std::cout << header << "\n";
 			
 			// Resets header length
 			headerLength = 0;
@@ -58,7 +57,7 @@ int main(int argc, char *argv[]){
 			sheet.headerArray[headerIndex] = header;
 			// If all headers have been found, records index at which headers end and exits loop
 			if (numHeadersFound == numHeaders){
-				headerEndIndex = i + 1; // Adds 1 so that index points to first character of data
+				dataStartIndex = i + 1; // Adds 1 so that index points to first character of data
 				break;
 			}
 		}
@@ -69,12 +68,21 @@ int main(int argc, char *argv[]){
 
 	// Loads data into Spreadsheet object
 	int dataLength = 0;	// Keeps track of the size of the data string
-	for (uint i=headerEndIndex; i<csvString.length(); i++){
-		std::cout << csvString[i];
+	int numDataFound = 0;	// Keeps track of # of data found
+	for (uint i=dataStartIndex; i<csvString.length(); i++){
+		//std::cout << csvString[i];
 
 		if (csvString[i]==','){
+			std::string dataString = csvString.substr(i-dataLength, dataLength);
+			std::cout << dataString << "\n";
 
 			dataLength = 0;
+
+			numDataFound++;
+			int dataIndex1 = (numDataFound - 1)/NUM_COLUMNS;
+			int dataIndex2 = (numDataFound - 1) % NUM_COLUMNS;
+			//std::cout << "-->(" << dataIndex1 << ", " << dataIndex2 << ")\n";
+			sheet.dataArray[dataIndex1][dataIndex2] = dataString;
 		}
 		else {
 			dataLength += 1;
@@ -83,7 +91,7 @@ int main(int argc, char *argv[]){
 
 	// STEP 2: Save csv data from memory to disk
 	// - figure out how to write to file
-	
+
 	// STEP 3: Use Qt to make spreadsheet GUI
 	// - figure out how to use Qt
 	// - implement cells in Qt GUI to view CSV data as spreadsheet
