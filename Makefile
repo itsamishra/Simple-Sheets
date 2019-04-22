@@ -7,5 +7,5 @@ run:		main.out
 clean:		main.out
 	rm main.out
 
-auto:
-	make compile run clean
+format:		main.cpp
+	clang-format main.cpp > dummy.cpp && cat dummy.cpp > main.cpp && rm dummy.cpp

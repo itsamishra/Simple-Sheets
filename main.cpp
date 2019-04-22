@@ -1,102 +1,140 @@
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 
-#define CSV_FILE_NAME	"MOCK_DATA.csv"
-#define NUM_COLUMNS	5
-#define NUM_DATA_ROWS	100
-
+#define CSV_FILE_NAME "MOCK_DATA.csv"
+#define NUM_COLUMNS 5
+#define NUM_DATA_ROWS 100
 
 class Spreadsheet {
-	public:
-		std::string headerArray[NUM_COLUMNS];
-		std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS];
+private:
+  // Converts CSV contents into string and returns it
+  void createCsvString() {
+
+    // Opens file in read mode
+    std::ifstream csv_file;
+    csv_file.open(CSV_FILE_NAME, std::ios::in);
+
+    // Makes sure file is open
+    if (csv_file.is_open() == false) {
+      std::cout << "ERROR: Could not open file\n";
+      // return 1;
+    }
+
+    // Feeds csv file into string line by line
+    std::string line;
+    std::string csvString = "";
+    while (getline(csv_file, line)) {
+      csvString += line + ",";
+    }
+    // std::cout << csvString << "\n";
+
+    // Closes file
+    csv_file.close();
+  }
+  // Sets value of headerArray[]
+  void setHeaderArray() {}
+  // Sets value of dataArray[]
+  void setDataArray() {}
+
+public:
+  std::string headerArray[NUM_COLUMNS];
+  std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS];
+
+  void loadCsv(std::string csvFileName) {
+    // createCsvString();
+    // setHeaderArray();
+    // setDataArray();
+  }
+
+  void saveCsv() {}
 };
 
+int main(int argc, char *argv[]) {
+  // Opens file in read mode
+  std::ifstream csv_file;
+  csv_file.open(CSV_FILE_NAME, std::ios::in);
 
-int main(int argc, char *argv[]){
-	// Opens file in read mode
-	std::ifstream csv_file;
-	csv_file.open(CSV_FILE_NAME, std::ios::in);
+  // Makes sure file is open
+  if (csv_file.is_open() == false) {
+    std::cout << "ERROR: Could not open file\n";
+    return 1;
+  }
 
-	// Makes sure file is open
-	if (csv_file.is_open() == false){
-		std::cout << "ERROR: Could not open file\n";
-		return 1;
-	}
+  // Feeds csv file into string line by line
+  std::string line;
+  std::string csvString = "";
+  while (getline(csv_file, line)) {
+    csvString += line + ",";
+  }
+  // std::cout << csvString << "\n";
 
-	// Feeds csv file into string line by line
-	std::string line;
-	std::string csvString = "";
-	while(getline(csv_file, line)){
-		csvString += line + ",";
-	}
-	//std::cout << csvString << "\n";
+  // Closes file
+  csv_file.close();
 
-	// Closes file
-	csv_file.close();
+  // Reads header into Spreadsheet object
+  Spreadsheet sheet;       // Contains all spreadsheet data
+  int dataStartIndex = 0;  // Keeps track of string index at which the header
+                           // ends and the data starts
+  int headerLength = 0;    // Keeps track of header length
+  int numHeadersFound = 0; // Keeps track of # of headers found
+  int numHeaders = NUM_COLUMNS; // Keeps track of # of headers that exist
+  for (uint i = 0; i < csvString.length(); i++) {
+    // If the next character is a comma, then we must be at the end of a header
+    if (csvString[i] == ',') {
+      // Extracts header from string
+      std::string header = csvString.substr(i - headerLength, headerLength);
 
-	// Reads header into Spreadsheet object
-	Spreadsheet sheet;		// Contains all spreadsheet data
-	int dataStartIndex = 0;		// Keeps track of string index at which the header ends and the data starts
-	int headerLength = 0;		// Keeps track of header length
-	int numHeadersFound = 0;	// Keeps track of # of headers found
-	int numHeaders = NUM_COLUMNS;	// Keeps track of # of headers that exist
-	for (uint i=0; i<csvString.length(); i++){
-		// If the next character is a comma, then we must be at the end of a header
-		if (csvString[i]==','){
-			// Extracts header from string
-			std::string header = csvString.substr(i-headerLength, headerLength);
-			
-			// Resets header length
-			headerLength = 0;
-		
-			// Adds new header to Spreadsheet object and checks to see if there are any more headers to find
-			numHeadersFound ++;
-			int headerIndex = numHeadersFound - 1;
-			sheet.headerArray[headerIndex] = header;
-			// If all headers have been found, records index at which headers end and exits loop
-			if (numHeadersFound == numHeaders){
-				dataStartIndex = i + 1; // Adds 1 so that index points to first character of data
-				break;
-			}
-		}
-		else {
-			headerLength += 1;
-		}
-	}
+      // Resets header length
+      headerLength = 0;
 
-	// Loads data into Spreadsheet object
-	int dataLength = 0;	// Keeps track of the size of the data string
-	int numDataFound = 0;	// Keeps track of # of data found
-	for (uint i=dataStartIndex; i<csvString.length(); i++){
-		//std::cout << csvString[i];
+      // Adds new header to Spreadsheet object and checks to see if there are
+      // any more headers to find
+      numHeadersFound++;
+      int headerIndex = numHeadersFound - 1;
+      sheet.headerArray[headerIndex] = header;
+      // If all headers have been found, records index at which headers end and
+      // exits loop
+      if (numHeadersFound == numHeaders) {
+        dataStartIndex =
+            i + 1; // Adds 1 so that index points to first character of data
+        break;
+      }
+    } else {
+      headerLength += 1;
+    }
+  }
 
-		if (csvString[i]==','){
-			std::string dataString = csvString.substr(i-dataLength, dataLength);
-			std::cout << dataString << "\n";
+  // Loads data into Spreadsheet object
+  int dataLength = 0;   // Keeps track of the size of the data string
+  int numDataFound = 0; // Keeps track of # of data found
+  for (uint i = dataStartIndex; i < csvString.length(); i++) {
+    // std::cout << csvString[i];
 
-			dataLength = 0;
+    if (csvString[i] == ',') {
+      std::string dataString = csvString.substr(i - dataLength, dataLength);
+      std::cout << dataString << "\n";
 
-			numDataFound++;
-			int dataIndex1 = (numDataFound - 1)/NUM_COLUMNS;
-			int dataIndex2 = (numDataFound - 1) % NUM_COLUMNS;
-			//std::cout << "-->(" << dataIndex1 << ", " << dataIndex2 << ")\n";
-			sheet.dataArray[dataIndex1][dataIndex2] = dataString;
-		}
-		else {
-			dataLength += 1;
-		}
-	}
+      dataLength = 0;
 
-	// STEP 2: Save csv data from memory to disk
-	// - figure out how to write to file
+      numDataFound++;
+      int dataIndex1 = (numDataFound - 1) / NUM_COLUMNS;
+      int dataIndex2 = (numDataFound - 1) % NUM_COLUMNS;
+      // std::cout << "-->(" << dataIndex1 << ", " << dataIndex2 << ")\n";
+      sheet.dataArray[dataIndex1][dataIndex2] = dataString;
+    } else {
+      dataLength += 1;
+    }
+  }
 
-	// STEP 3: Use Qt to make spreadsheet GUI
-	// - figure out how to use Qt
-	// - implement cells in Qt GUI to view CSV data as spreadsheet
-	// - implement editing cells of spreadsheet
-	// - implement "Save" button
+  // STEP 2: Save csv data from memory to disk
+  // - figure out how to write to file
 
-	return 0;
+  // STEP 3: Use Qt to make spreadsheet GUI
+  // - figure out how to use Qt
+  // - implement cells in Qt GUI to view CSV data as spreadsheet
+  // - implement editing cells of spreadsheet
+  // - implement "Save" button
+
+  return 0;
 }
