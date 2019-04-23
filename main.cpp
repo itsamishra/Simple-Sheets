@@ -8,26 +8,22 @@
 
 class Spreadsheet {
 private:
-  // Converts CSV contents into string and returns it
-  void createCsvString() {
-
+  // Converts csv contents into string
+  void getCsvString(std::string csvFileName) {
     // Opens file in read mode
     std::ifstream csv_file;
-    csv_file.open(CSV_FILE_NAME, std::ios::in);
+    csv_file.open(csvFileName, std::ios::in);
 
     // Makes sure file is open
     if (csv_file.is_open() == false) {
       std::cout << "ERROR: Could not open file\n";
-      // return 1;
     }
 
     // Feeds csv file into string line by line
     std::string line;
-    std::string csvString = "";
     while (getline(csv_file, line)) {
-      csvString += line + ",";
+      this->csvFileString += line + ",";
     }
-    // std::cout << csvString << "\n";
 
     // Closes file
     csv_file.close();
@@ -38,19 +34,29 @@ private:
   void setDataArray() {}
 
 public:
-  std::string headerArray[NUM_COLUMNS];
-  std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS];
-
-  void loadCsv(std::string csvFileName) {
-    // createCsvString();
-    // setHeaderArray();
-    // setDataArray();
+  Spreadsheet(std::string csvFileName) {
+    // Loads csv file into memory as a string
+    getCsvString(csvFileName);
+    // TODO: Handle possible error from getCsvString
+    
+    //getHeaderArray();
+    //getDataArray();
+    std::cout << this->csvFileString << "\n";
   }
 
+  std::string csvFileString = "";
+  std::string headerArray[NUM_COLUMNS];
+  std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS];
+ 
   void saveCsv() {}
 };
 
 int main(int argc, char *argv[]) {
+  Spreadsheet spreadsheet(CSV_FILE_NAME);
+  /*
+  // Initialize Spreadsheet object
+  Spreadsheet sheet;
+
   // Opens file in read mode
   std::ifstream csv_file;
   csv_file.open(CSV_FILE_NAME, std::ios::in);
@@ -73,9 +79,7 @@ int main(int argc, char *argv[]) {
   csv_file.close();
 
   // Reads header into Spreadsheet object
-  Spreadsheet sheet;       // Contains all spreadsheet data
   int dataStartIndex = 0;  // Keeps track of string index at which the header
-                           // ends and the data starts
   int headerLength = 0;    // Keeps track of header length
   int numHeadersFound = 0; // Keeps track of # of headers found
   int numHeaders = NUM_COLUMNS; // Keeps track of # of headers that exist
@@ -137,4 +141,5 @@ int main(int argc, char *argv[]) {
   // - implement "Save" button
 
   return 0;
+*/
 }
