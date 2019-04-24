@@ -54,36 +54,39 @@ private:
                     break;
                 }
             }
-            // Else if the next character isn't a comma, increments length (i.e. size) of current header
+                // Else if the next character isn't a comma, increments length (i.e. size) of current header
             else {
                 headerLength += 1;
             }
         }
     }
     // Sets value of dataArray[][]
-     void setDataArray() {
-       // Loads data into Spreadsheet object
-       int dataLength = 0;   // Keeps track of the size of the data string
-       int numDataFound = 0; // Keeps track of # of data found
+    void setDataArray() {
+        int dataLength = 0;   // Keeps track of the size of the data string
+        int numDataFound = 0; // Keeps track of # of data found
 
-       for (uint i = this->dataStartIndex; i < this->csvFileString.length(); i++) {
+        // Iterates over csv string, starting at index at which data begins
+        for (uint i = this->dataStartIndex; i < this->csvFileString.length(); i++) {
+            // If the next character is a comma, adds the 'data' to dataArray
+            if (this->csvFileString[i] == ',') {
+                // Extracts data string from csv string
+                std::string dataString = this->csvFileString.substr(i - dataLength, dataLength);
 
-         if (this->csvFileString[i] == ',') {
-           std::string dataString = this->csvFileString.substr(i - dataLength, dataLength);
-           //std::cout << dataString << "\n";
+                // Resets size of data to zero
+                dataLength = 0;
 
-           dataLength = 0;
-
-           numDataFound++;
-           int dataIndex1 = (numDataFound - 1) / NUM_COLUMNS;
-           int dataIndex2 = (numDataFound - 1) % NUM_COLUMNS;
-
-           this->dataArray[dataIndex1][dataIndex2] = dataString;
-         } else {
-           dataLength += 1;
-         }
-       }
-     }
+                // Adds data string to dataArray
+                numDataFound++;
+                int dataIndex1 = (numDataFound - 1) / NUM_COLUMNS;
+                int dataIndex2 = (numDataFound - 1) % NUM_COLUMNS;
+                this->dataArray[dataIndex1][dataIndex2] = dataString;
+            }
+                // Else if the next character isn't a comma, increments length (i.e. size) of data
+            else {
+                dataLength += 1;
+            }
+        }
+    }
 
 public:
     Spreadsheet(std::string csvFileName) {
@@ -100,12 +103,18 @@ public:
     std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS]; // Array of data items
     int dataStartIndex = 0;  // Keeps track of string index at which the data starts
 
-    void saveCsv() {}
+    void saveCsv() {
+        std::cout << this->headerArray->size() << "\n";
+        std::cout << (sizeof(headerArray)/sizeof(*headerArray)) << "\n";
+
+
+    }
 };
 
 int main(int argc, char *argv[]) {
     // Creates Spreadsheet object, which loads specified csv file into memory
     Spreadsheet spreadsheet(CSV_FILE_NAME);
+    spreadsheet.saveCsv();
     std::cout << "DONE\n";
 
     // STEP 2: Save csv data from memory to disk
