@@ -103,19 +103,28 @@ public:
     std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS]; // Array of data items
     int dataStartIndex = 0;  // Keeps track of string index at which the data starts
 
-    void saveCsv() {
-        std::cout << this->headerArray->size() << "\n";
-        std::cout << (sizeof(headerArray)/sizeof(*headerArray)) << "\n";
+    // Saves Spreadsheet object to disk
+    void saveCsv(std::string newCsvFileName) {
+        std::cout << "New filename: " << newCsvFileName << "\n";
 
-
+        // Prints headers
+        for (int i=0; i<NUM_COLUMNS; i++){
+            std::cout << this->headerArray[i] << "\n";
+        }
+        // Prints data
+        for (int i=0; i<NUM_DATA_ROWS; i++){
+            for (int j=0; j<NUM_COLUMNS; j++){
+                std::cout << this->dataArray[i][j] << "\n";
+            }
+        }
     }
 };
 
 int main(int argc, char *argv[]) {
     // Creates Spreadsheet object, which loads specified csv file into memory
     Spreadsheet spreadsheet(CSV_FILE_NAME);
-    spreadsheet.saveCsv();
-    std::cout << "DONE\n";
+    spreadsheet.saveCsv("MOCK_DATA_NEW.csv");
+    std::cout << "=====DONE\"=====\n";
 
     // STEP 2: Save csv data from memory to disk
     // - figure out how to write to file
