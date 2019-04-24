@@ -1,0 +1,3 @@
+/home/am/CLionProjects/Simple-Sheets/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/am/CLionProjects/Simple-Sheets/cmake-build-debug/CMakeFiles/Simple_Sheets.dir
+/home/am/CLionProjects/Simple-Sheets/cmake-build-debug/CMakeFiles/edit_cache.dir
