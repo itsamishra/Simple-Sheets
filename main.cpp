@@ -9,7 +9,7 @@
 class Spreadsheet {
 private:
   // Converts csv contents into string
-  void getCsvString(std::string csvFileName) {
+  void setCsvFileString(std::string csvFileName) {
     // Opens file in read mode
     std::ifstream csv_file;
     csv_file.open(csvFileName, std::ios::in);
@@ -29,30 +29,61 @@ private:
     csv_file.close();
   }
   // Sets value of headerArray[]
-  void setHeaderArray() {}
-  // Sets value of dataArray[]
+  void setHeaderArray() {
+    int dataStartIndex = 0;  // Keeps track of string index at which the header
+    int headerLength = 0;    // Keeps track of header length
+    int numHeadersFound = 0; // Keeps track of # of headers found
+    int numHeaders = NUM_COLUMNS; // Keeps track of # of headers that exist
+    for (uint i = 0; i < csvFileString.length(); i++) {
+      // If the next character is a comma, then we must be at the end of a
+      // header
+      if (csvFileString[i] == ',') {
+        // Extracts header from string
+        std::string header = csvFileString.substr(i - headerLength, headerLength);
+
+        // Resets header length
+        headerLength = 0;
+
+        // Adds new header to Spreadsheet object and checks to see if there are
+        // any more headers to find
+        numHeadersFound++;
+        int headerIndex = numHeadersFound - 1;
+        this->headerArray[headerIndex] = header;
+        // If all headers have been found, records index at which headers end
+        // and exits loop
+        if (numHeadersFound == numHeaders) {
+          dataStartIndex =
+              i + 1; // Adds 1 so that index points to first character of data
+          break;
+        }
+      } else {
+        headerLength += 1;
+      }
+    }
+  }
+  // Sets value of dataArray[][]
   void setDataArray() {}
 
 public:
   Spreadsheet(std::string csvFileName) {
     // Loads csv file into memory as a string
-    getCsvString(csvFileName);
+    setCsvFileString(csvFileName);
     // TODO: Handle possible error from getCsvString
-    
-    //getHeaderArray();
-    //getDataArray();
-    std::cout << this->csvFileString << "\n";
+    setHeaderArray();
+    // getDataArray();
   }
 
-  std::string csvFileString = "";
-  std::string headerArray[NUM_COLUMNS];
-  std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS];
- 
+  // Object attributes
+  std::string csvFileString = "";       // String containing entire csv file
+  std::string headerArray[NUM_COLUMNS]; // Array of header items
+  std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS]; // Array of data items
+
   void saveCsv() {}
 };
 
 int main(int argc, char *argv[]) {
   Spreadsheet spreadsheet(CSV_FILE_NAME);
+  std::cout << "DONE" << "\n";
   /*
   // Initialize Spreadsheet object
   Spreadsheet sheet;
