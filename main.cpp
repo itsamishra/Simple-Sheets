@@ -28,6 +28,7 @@ private:
         // Closes file
         csv_file.close();
     }
+
     // Sets value of headerArray[]
     void setHeaderArray() {
         // int dataStartIndex = 0;  // Keeps track of string index at which the data starts
@@ -60,6 +61,7 @@ private:
             }
         }
     }
+
     // Sets value of dataArray[][]
     void setDataArray() {
         int dataLength = 0;   // Keeps track of the size of the data string
@@ -88,6 +90,29 @@ private:
         }
     }
 
+    // Converts Spreadsheet object to string and returns it
+    std::string getSpreadsheetString(){
+        std::string spreadsheetCsvString = "";
+
+        // Adds header to spreadsheetCsvString
+        for (int i=0; i<NUM_COLUMNS; i++){
+            spreadsheetCsvString += this->headerArray[i] + ",";
+        }
+        // Replaces last comma on line with newline character
+        spreadsheetCsvString.replace(spreadsheetCsvString.length()-1, 1, "\n");
+
+        // Adds data to spreadsheetCsvString
+        for (int i=0; i<NUM_DATA_ROWS; i++){
+            for (int j=0; j<NUM_COLUMNS; j++){
+                spreadsheetCsvString += this->dataArray[i][j] + ",";
+            }
+            // Replaces last comma on line with newline character
+            spreadsheetCsvString.replace(spreadsheetCsvString.length()-1, 1, "\n");
+        }
+
+        return spreadsheetCsvString;
+    }
+
 public:
     Spreadsheet(std::string csvFileName) {
         // Loads csv file into memory as a string
@@ -104,19 +129,14 @@ public:
     int dataStartIndex = 0;  // Keeps track of string index at which the data starts
 
     // Saves Spreadsheet object to disk
-    void saveCsv(std::string newCsvFileName) {
+    void saveSpreadsheetAsCsv(std::string newCsvFileName) {
         std::cout << "New filename: " << newCsvFileName << "\n";
 
-        // Prints headers
-        for (int i=0; i<NUM_COLUMNS; i++){
-            std::cout << this->headerArray[i] << "\n";
-        }
-        // Prints data
-        for (int i=0; i<NUM_DATA_ROWS; i++){
-            for (int j=0; j<NUM_COLUMNS; j++){
-                std::cout << this->dataArray[i][j] << "\n";
-            }
-        }
+        // Gets string representation of Spreadsheet object
+        std::string spreadsheetCsvString = this->getSpreadsheetString();
+        std::cout << spreadsheetCsvString;
+
+        // TODO: Saves spreadsheetCsvString to csv file
     }
 };
 
@@ -125,7 +145,7 @@ int main(int argc, char *argv[]) {
     Spreadsheet spreadsheet(CSV_FILE_NAME);
 
     // Saves Spreadsheet object to disk as csv
-    spreadsheet.saveCsv("MOCK_DATA_NEW.csv");
+    spreadsheet.saveSpreadsheetAsCsv("MOCK_DATA_NEW.csv");
 
     std::cout << "=====DONE=====\n";
 
