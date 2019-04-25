@@ -123,8 +123,11 @@ public:
 int main(int argc, char *argv[]) {
     // Creates Spreadsheet object, which loads specified csv file into memory
     Spreadsheet spreadsheet(CSV_FILE_NAME);
+
+    // Saves Spreadsheet object to disk as csv
     spreadsheet.saveCsv("MOCK_DATA_NEW.csv");
-    std::cout << "=====DONE\"=====\n";
+
+    std::cout << "=====DONE=====\n";
 
     // STEP 2: Save csv data from memory to disk
     // - figure out how to write to file
