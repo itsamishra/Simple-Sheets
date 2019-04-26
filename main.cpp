@@ -2,17 +2,17 @@
 #include <iostream>
 #include <string>
 
-#define CSV_FILE_NAME   "MOCK_DATA.csv"
+//#define CSV_FILE_NAME   "MOCK_DATA.csv"
 #define NUM_COLUMNS     5
 #define NUM_DATA_ROWS   100
 
 class Spreadsheet {
 private:
     // Converts csv contents into string
-    void setCsvFileString(std::string csvFileName) {
+    std::string getCsvFileString() {
         // Opens file in read mode
         std::ifstream csv_file;
-        csv_file.open(csvFileName, std::ios::in);
+        csv_file.open(this->csvFileName, std::ios::in);
 
         // Makes sure file is open
         if (csv_file.is_open() == false) {
@@ -21,12 +21,15 @@ private:
 
         // Feeds csv file into string line by line
         std::string line;
+        std::string csvString = "";
         while (getline(csv_file, line)) {
-            this->csvFileString += line + ",";
+            csvString += line + ",";
         }
 
         // Closes file
         csv_file.close();
+
+        return csvString;
     }
 
     // Sets value of headerArray[]
@@ -114,35 +117,43 @@ private:
     }
 
 public:
-    Spreadsheet(std::string csvFileName) {
-        // Loads csv file into memory as a string
-        setCsvFileString(csvFileName);
-        // TODO: Handle possible error from getCsvString
-        setHeaderArray();
-        setDataArray();
-    }
-
     // Object attributes
+    std::string csvFileName;
     std::string csvFileString = "";       // String containing entire csv file
     std::string headerArray[NUM_COLUMNS]; // Array of header items
     std::string dataArray[NUM_DATA_ROWS][NUM_COLUMNS]; // Array of data items
     int dataStartIndex = 0;  // Keeps track of string index at which the data starts
 
+    // Constructor
+    Spreadsheet(std::string *csvFileName) {
+        // Initializes object attributes
+        this->csvFileName = *csvFileName;
+        this->csvFileString = getCsvFileString();
+        // TODO: Handle possible error from getCsvString
+        setHeaderArray();
+        setDataArray();
+    }
+
     // Saves Spreadsheet object to disk
     void saveSpreadsheetAsCsv(std::string newCsvFileName) {
-        std::cout << "New filename: " << newCsvFileName << "\n";
-
         // Gets string representation of Spreadsheet object
         std::string spreadsheetCsvString = this->getSpreadsheetString();
         std::cout << spreadsheetCsvString;
 
-        // TODO: Saves spreadsheetCsvString to csv file
+        // Saves spreadsheetCsvString to csv file
+        std::ofstream newCsvFile;
+        newCsvFile.open(newCsvFileName);
+        newCsvFile << spreadsheetCsvString;
+        newCsvFile.close();
     }
 };
 
 int main(int argc, char *argv[]) {
+    // Temp values
+    std::string CSV_FILE_NAME = "MOCK_DATA.csv";
+
     // Creates Spreadsheet object, which loads specified csv file into memory
-    Spreadsheet spreadsheet(CSV_FILE_NAME);
+    Spreadsheet spreadsheet(&CSV_FILE_NAME);
 
     // Saves Spreadsheet object to disk as csv
     spreadsheet.saveSpreadsheetAsCsv("MOCK_DATA_NEW.csv");
